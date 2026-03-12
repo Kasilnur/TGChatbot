@@ -1,22 +1,31 @@
-# 🤖 Иру — Интеллектуальный ИИ-Ассистент
+# TGChatbot
+🤖 IRU AI — Твой персональный умный друг в Telegram
+IRU — это не просто чат-бот, а адаптивный ассистент на базе модели DeepSeek R1, который умеет слушать, помнить и общаться на равных.
 
-![Python](https://img.shields.io/badge/Python-3.9+-blue?style=for-the-badge&logo=python)
-![Telegram](https://img.shields.io/badge/Telegram-Bot%20API-blue?style=for-the-badge&logo=telegram)
-![AI](https://img.shields.io/badge/AI-Transformer-orange?style=for-the-badge)
+✨ Основные фишки
+🗣 Голосовое управление: Отправляй голосовые сообщения — Иру поймет их благодаря интеграции с SpeechRecognition и pydub.
 
-**Иру** — это продвинутый Telegram-бот, построенный на базе современных нейросетевых архитектур (**Transformer**). Он умеет вести осмысленный диалог, понимать голосовые сообщения и анализировать эмоции пользователя.
+🧠 Долгосрочная память: Бот использует систему суммаризации диалогов. Он не просто хранит текст, а помнит суть ваших разговоров за прошлые дни.
 
----
+⚡ Параллельная работа: Благодаря многопоточности и фоновым процессам, бот никогда не «зависает» при обработке тяжелых запросов.
 
+<<<<<<< HEAD
 ## 📸 Демонстрация
 Ниже представлены скриншоты работы бота с главным меню и приветственным сообщением:
 
 | Главное меню (/help) | Приветствие (/start) |
 | :---: | :---: |
 | ![Главное меню](assets/menu.jpg) | ![Приветствие](assets/start.jpg) |
+=======
+🎭 Живой интерфейс: Реализована бесконечная анимация «Печатает...», пока ИИ генерирует ответ, чтобы ты всегда знал, что процесс идет.
 
----
+👤 Личность: Иру общается как твой умный друг — минимум формальностей.
+>>>>>>> 07f7b18a997bdde0c1e1ba80ae974689074a2cbe
 
+🛠 Технологический стек
+Core: pyTelegramBotAPI (Synchronous with Threading)
+
+<<<<<<< HEAD
 ## 🛠️ Техническое описание
 
 ### 1. Используемый API
@@ -42,35 +51,48 @@
 - **Удаленный репозиторий**: Код размещен и синхронизирован на платформе **GitHub**.
     - Основной репозиторий: [rusln4/chat_ai_tgbot](https://github.com/rusln4/chat_ai_tgbot)
     - Командный репозиторий: [Kasilnur/TGChatbot](https://github.com/Kasilnur/TGChatbot)
+=======
+AI Engine: Hugging Face Inference Client (Model: DeepSeek-R1)
 
----
+Voice Processing: SpeechRecognition + PyDub (FFmpeg)
+>>>>>>> 07f7b18a997bdde0c1e1ba80ae974689074a2cbe
 
-## 🚀 Быстрый запуск
+Memory Management: Custom "Sliding Window" с фоновой суммаризацией через threading.
 
-### 1. Клонирование репозитория
-```bash
-git clone https://github.com/rusln4/chat_ai_tgbot.git
-cd chat_ai_tgbot
-```
+🚀 Быстрый старт
+1. Требования
+Убедись, что у тебя установлен FFmpeg (необходим для обработки голосовых сообщений).
 
-### 2. Установка зависимостей
-```bash
-pip install -r requirements.txt
-```
+Windows PowerShell: winget install ffmpeg
 
-### 3. Настройка переменных окружения
-Создайте файл `.env` в корне проекта и добавьте ваши токены:
-```env
-BOT_TOKEN=ваш_токен_телеграм_бота
-DEEPSEEK_TOKEN=ваш_токен_hugging_face
-```
+Linux: sudo apt install ffmpeg
 
+2. Установка зависимостей
+Bash
+pip install pyTelegramBotAPI huggingface_hub python-dotenv SpeechRecognition pydub
+3. Настройка окружения
+Создай файл .env в корне проекта и добавь свои ключи:
+
+<<<<<<< HEAD
 ### 4. Запуск
 ```bash
 python3 run.py
 ```
+=======
+Фрагмент кода
+BOT_TOKEN=твой_токен_телеграм_бота
+DEEPSEEK_TOKEN=твой_токен_hugging_face
+>>>>>>> 07f7b18a997bdde0c1e1ba80ae974689074a2cbe
 
----
+Бот использует трехуровневую систему контекста:
 
+<<<<<<< HEAD
 ## 👨‍💻 Автор
 [rusln4](https://github.com/rusln4)
+=======
+Current: Последние 30 сообщений отправляются «как есть» для мгновенной реакции.
+
+Summary: После 10-го сообщения в день ИИ в фоновом режиме сжимает текущий лог в одну емкую фразу.
+
+Archive: В конце дня итоги переносятся в архив, который Иру читает при каждом новом запуске.
+>>>>>>> 07f7b18a997bdde0c1e1ba80ae974689074a2cbe
