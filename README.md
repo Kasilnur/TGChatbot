@@ -73,6 +73,4 @@ python3 run.py
 
 ---
 
-## 👨‍💻 Автор
-[rusln4](https://github.com/rusln4)
 
