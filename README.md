@@ -1,4 +1,4 @@
-# TGChatbot
+TGChatbot
 🤖 IRU AI — Твой персональный умный друг в Telegram
 IRU — это не просто чат-бот, а адаптивный ассистент на базе модели DeepSeek R1, который умеет слушать, помнить и общаться на равных.
 
@@ -11,12 +11,12 @@ IRU — это не просто чат-бот, а адаптивный асси
 
 🎭 Живой интерфейс: Реализована бесконечная анимация «Печатает...», пока ИИ генерирует ответ, чтобы ты всегда знал, что процесс идет.
 
-👤 Личность: Иру общается как твой умный друг — минимум формальностей, максимум пользы и щепотка безумия, если начать нести чепуху.
+👤 Личность: Иру общается как твой умный друг — минимум формальностей.
 
 🛠 Технологический стек
 Core: pyTelegramBotAPI (Synchronous with Threading)
 
-AI Engine: Hugging Face Inference Client (Model: DeepSeek-R1-Distill-Qwen-32B)
+AI Engine: Hugging Face Inference Client (Model: DeepSeek-R1)
 
 Voice Processing: SpeechRecognition + PyDub (FFmpeg)
 
@@ -39,17 +39,7 @@ pip install pyTelegramBotAPI huggingface_hub python-dotenv SpeechRecognition pyd
 Фрагмент кода
 BOT_TOKEN=твой_токен_телеграм_бота
 DEEPSEEK_TOKEN=твой_токен_hugging_face
-4. Запуск
-Bash
-python main.py
-📂 Структура проекта
-Plaintext
-.
-├── main.py              # Основной код бота
-├── .env                 # Конфиденциальные токены
-├── TempAudio/           # Временная папка для конвертации голоса
-└── README.md            # Данная документация
-⚙️ Как работает память
+
 Бот использует трехуровневую систему контекста:
 
 Current: Последние 6 сообщений отправляются «как есть» для мгновенной реакции.
