@@ -1,10 +1,14 @@
 import telebot
 from telebot import types
 import os
+import threading
+from datetime import datetime
 from dotenv import load_dotenv
 import speech_recognition as sr
 from pydub import AudioSegment
 from huggingface_hub import InferenceClient
+import time
+import threading
 
 # Инициализация путей для папок
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -19,6 +23,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 # Инициализация бота
 bot = telebot.TeleBot(BOT_TOKEN)
 
+user_contexts = {}
 user_sessions = {}
 
 
@@ -36,34 +41,85 @@ def get_start_only():
     ]
 
 
+def keep_typing(chat_id, stop_event):
+    while not stop_event.is_set():
+        try:
+            bot.send_chat_action(chat_id, 'typing')
+            time.sleep(4)
+        except Exception:
+            break
+
 # Инициализация клиента
 client = InferenceClient(token=os.getenv("DEEPSEEK_TOKEN"))
 
 
-def get_ai_response(prompt):
+def get_ai_response(user_id, prompt):
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    if user_id not in user_contexts:
+        user_contexts[user_id] = {"summaries": [], "current_day": today, "daily_logs": []}
+
+    # Логика смены дня
+    if user_contexts[user_id]["current_day"] != today:
+        prev_day = user_contexts[user_id]["current_day"]
+        logs = " ".join(user_contexts[user_id]["daily_logs"])
+        if logs:
+            user_contexts[user_id]["summaries"].append({"date": prev_day, "context": logs})
+        user_contexts[user_id]["daily_logs"] = []
+        user_contexts[user_id]["current_day"] = today
+
+    recent_logs = "\n".join(user_contexts[user_id]["daily_logs"][-30:])
+    history_short = str(user_contexts[user_id]["summaries"][-3:])
+
+    system_prompt = f"""Ты — умный друг. Твое имя - Иру. Ты весьма эмоциональный. Смайликов мало, интеллект высокий.
+    Выдавай ответ сразу без рассуждений и тегов. Без Markdown. Делай форматирование сообщения чистым текстом.
+    Твоя память о прошлом: {history_short}
+    Контекст текущего дня: {recent_logs}"""
+
     completion = client.chat.completions.create(
         model="deepseek-ai/DeepSeek-R1:novita",
         messages=[
-            {
-                "role": "system",
-                "content": """Ты — лаконичный помощник в чате telegram.
-                 Сразу подавай общение на уровне хороших друзей.
-                 Выдавай ответ сразу без рассуждений и тегов.
-                 Не дублируй ответ.
-                 В ответе не пытайся использовать Markdown.
-                 Если пользователь долго несет бессмыслицу (говори серьезно). В конечном итоге притворись, что ты сходишь с ума""" # Добавить под API
-            },
-                {
-                "role": "user",
-                "content": prompt
-            }
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt}
         ],
+        max_tokens=800
     )
-    print(f"""
-    LOGGER
-    Ответ LLM: {completion.choices[0].message.content}
-    """)
-    return completion.choices[0].message.content
+    
+    response = completion.choices[0].message.content
+
+    print(f"LOGGER | User: {user_id} | Context: {prompt[:100]}")
+
+    user_contexts[user_id]["daily_logs"].append(f"U: {prompt}")
+    user_contexts[user_id]["daily_logs"].append(f"AI: {response}")
+
+    # ФОНОВАЯ СУММАРИЗАЦИЯ
+    # Если за день накопилось больше 12 записей - сжатие их в фоне
+    if len(user_contexts[user_id]["daily_logs"]) > 12:
+        threading.Thread(target=summarize_context, args=(user_id,)).start()
+
+    return response
+
+
+def summarize_context(user_id):
+    if user_id not in user_contexts or not user_contexts[user_id]["daily_logs"]:
+        return
+
+    logs_to_summarize = "\n".join(user_contexts[user_id]["daily_logs"])
+    
+    try:
+        summary_completion = client.chat.completions.create(
+            model="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+            messages=[
+                {"role": "system", "content": "Ты — архиватор. Сожми переписку в ОДНО емкое предложение, сохранив важные факты."},
+                {"role": "user", "content": logs_to_summarize}
+            ],
+            max_tokens=200
+        )
+        summary = summary_completion.choices[0].message.content
+        user_contexts[user_id]["daily_logs"] = [f"Краткая предыстория дня: {summary}"]
+        print(f"LOGGER | Контекст пользователя {user_id} успешно сжат.")
+    except Exception as e:
+        print(f"LOGGER | Ошибка суммаризации: {e}")
 
 # Слушатели
 @bot.message_handler(commands=['start'])
@@ -128,8 +184,13 @@ def handle_text(message):
     elif message.text == "Выход":
         exit_command(message)
     else:
-        bot.send_chat_action(message.chat.id, 'typing')
-        bot.send_message(message.chat.id, get_ai_response(message.text))
+        stop_typing = threading.Event()
+        typing_thread = threading.Thread(target=keep_typing, args=(message.chat.id, stop_typing))
+        typing_thread.start()
+        answer = get_ai_response(message.from_user.id, message.text)
+        stop_typing.set()
+        typing_thread.join()
+        bot.send_message(message.chat.id, answer)
 
 
 @bot.message_handler(content_types=['voice'])
@@ -156,8 +217,13 @@ def handle_voice(message):
         with sr.AudioFile(wav_filename) as source:
             audio_data = recognizer.record(source)
             text = recognizer.recognize_google(audio_data, language="ru-RU")
-            bot.send_chat_action(message.chat.id, 'typing')
-            bot.send_message(message.chat.id, get_ai_response(text))
+            stop_typing = threading.Event()
+            typing_thread = threading.Thread(target=keep_typing, args=(message.chat.id, stop_typing))
+            typing_thread.start()
+            answer = get_ai_response(message.from_user.id, text)
+            stop_typing.set()
+            typing_thread.join()
+            bot.send_message(message.chat.id, answer)
 
             print(f"""LOGGER\nТекст голосового сообщения от пользователя {message.from_user.id}: {text}""")
 
