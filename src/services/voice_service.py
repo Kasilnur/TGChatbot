@@ -42,7 +42,7 @@ class VoiceService:
                 audio_data = self.recognizer.record(source)
                 text = self.recognizer.recognize_google(audio_data, language="ru-RU")
                 
-                bot.reply_to(message, f"Вы сказали: {text}\n\nИру думает... 🤔")
+                bot.reply_to(message, f"Вы сказали: {text}\n\nПечатает... ✍️")
                 
                 ai_response = ai_service.get_response(user_id, text)
                 

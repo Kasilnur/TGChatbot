@@ -26,7 +26,20 @@ class CommandHandler:
             )
             self.user_sessions[user_id] = True
             self.ai_service.clear_context(user_id)
-            self.bot.reply_to(message, "Приветствую, Я Иру! Теперь я работаю на базе DeepSeek и помню наш разговор. О чем пообщаемся?")
+            
+            welcome_text = (
+                f"Привет, {message.from_user.first_name}! 👋\n\n"
+                "Я — **Иру**, твой персональный ИИ-ассистент. "
+                "Я работаю на базе мощной языковой модели и готов помочь тебе с любыми задачами: "
+                "от простого общения до решения сложных вопросов. 🧠\n\n"
+                "**Что я умею:**\n"
+                "💬 Вести диалог и помнить контекст\n"
+                "🎙️ Понимать голосовые сообщения\n"
+                "🎭 Распознавать твоё настроение\n\n"
+                "Просто напиши мне что-нибудь или отправь «голос»! 🚀"
+            )
+            
+            self.bot.reply_to(message, welcome_text, parse_mode='Markdown')
             try:
                 self.bot.set_message_reaction(message.chat.id, message.message_id, [types.ReactionTypeEmoji('🤝')])
             except:

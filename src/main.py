@@ -43,7 +43,7 @@ def handle_text(message):
         # Показываем статус 'печатает'
         bot.send_chat_action(message.chat.id, 'typing')
         
-        thinking_msg = bot.send_message(message.chat.id, "Иру думает... 🤔")
+        thinking_msg = bot.send_message(message.chat.id, "Печатает... ✍️")
         ai_response = ai_service.get_response(user_id, message.text)
         
         # Логируем текст
