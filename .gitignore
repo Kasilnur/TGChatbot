@@ -1,1 +1,11 @@
 .env
+*.pyc
+__pycache__/
+logs/
+data/
+VoiceData/
+.DS_Store
+.vscode/
+.idea/
+*.wav
+*.ogg
