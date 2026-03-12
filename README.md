@@ -1,4 +1,6 @@
 # TGChatbot
+<img width="390" height="380" alt="image" src="https://github.com/user-attachments/assets/e3c33e86-17d1-4d12-bab2-6d3d5bac17d9" />
+
 🤖 IRU AI — Твой персональный умный друг в Telegram
 IRU — это не просто чат-бот, а адаптивный ассистент на базе модели DeepSeek R1, который умеет слушать, помнить и общаться на равных.
 
