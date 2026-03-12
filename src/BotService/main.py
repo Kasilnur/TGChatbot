@@ -93,8 +93,8 @@ def get_ai_response(user_id, prompt):
     user_contexts[user_id]["daily_logs"].append(f"AI: {response}")
 
     # ФОНОВАЯ СУММАРИЗАЦИЯ
-    # Если за день накопилось больше 12 записей - сжатие их в фоне
-    if len(user_contexts[user_id]["daily_logs"]) > 12:
+    # Если за день накопилось больше 10 записей - сжатие их в фоне
+    if len(user_contexts[user_id]["daily_logs"]) > 10:
         threading.Thread(target=summarize_context, args=(user_id,)).start()
 
     return response
