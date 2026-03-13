@@ -2,7 +2,7 @@ import os
 import datetime
 import shutil
 import speech_recognition as sr
-import soundfile as sf
+from pydub import AudioSegment
 from src.config.config import Config
 from src.utils.logger import log_message
 
@@ -34,9 +34,9 @@ class VoiceService:
             shutil.copy2(ogg_path, history_path)
 
             # Конвертация ogg в wav
-            data, samplerate = sf.read(ogg_path)
-            sf.write(wav_path, data, samplerate)
-            
+            audio = AudioSegment.from_file(ogg_path)
+            audio.export(wav_path, format="wav")
+
             # Распознавание речи
             with sr.AudioFile(wav_path) as source:
                 audio_data = self.recognizer.record(source)

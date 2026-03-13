@@ -72,4 +72,4 @@ def handle_voice(message):
 
 if __name__ == "__main__":
     print("Бот Иру запущен!")
-    bot.infinity_polling(timeout=5)
+    bot.infinity_polling(timeout=None)
