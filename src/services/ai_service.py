@@ -60,6 +60,7 @@ class AIService:
         if not ai_response and self.fallback_client:
             try:
                 print(f"--- Attempt 2: Requesting Fallback AI (Gemma/OpenRouter) for user {user_id} ---")
+                # Отправка запроса резервному клиенту
                 completion = self.fallback_client.chat.send(
                     model="google/gemma-7b-it:free", messages=self.user_contexts[user_id]
                 )
