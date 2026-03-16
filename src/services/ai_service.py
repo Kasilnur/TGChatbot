@@ -5,6 +5,7 @@ import datetime
 import os
 
 class AIService:
+    """Сервис для взаимодействия с моделями ИИ."""
     def __init__(self):
         # Клиент для основной модели (Hugging Face)
         self.main_client = None
