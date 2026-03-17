@@ -8,7 +8,7 @@ class AIService:
         # и качественная БЕСПЛАТНАЯ модель на Hugging Face. 
         # DeepSeek часто выдает 402 ошибку из-за перегрузки серверов.
         self.client = InferenceClient(
-            model="Qwen/Qwen2.5-72B-Instruct", 
+            model="deepseek-ai/DeepSeek-R1:novita", 
             token=Config.DEEPSEEK_TOKEN
         )
         self.user_contexts = {}

@@ -4,6 +4,8 @@ from src.services.ai_service import AIService
 from src.services.voice_service import VoiceService
 from src.handlers.commands import CommandHandler
 from src.utils.logger import log_message
+import time
+import threading
 
 # Валидация конфига
 Config.validate()
@@ -17,6 +19,15 @@ user_sessions = {}
 # Инициализация команд
 command_handler = CommandHandler(bot, ai_service, user_sessions)
 command_handler.register_handlers()
+
+def keep_typing(chat_id, stop_event):
+    while not stop_event.is_set():
+        try:
+            bot.send_chat_action(chat_id, 'typing')
+            time.sleep(4)
+        except Exception:
+            break
+
 
 # Регистрация обработчиков текста и голоса
 @bot.message_handler(content_types=['text'])
@@ -41,7 +52,9 @@ def handle_text(message):
             pass
             
         # Показываем статус 'печатает'
-        bot.send_chat_action(message.chat.id, 'typing')
+        stop_typing = threading.Event()
+        typing_thread = threading.Thread(target=keep_typing, args=(message.chat.id, stop_typing))
+        typing_thread.start()
         
         thinking_msg = bot.send_message(message.chat.id, "Печатает... ✍️")
         ai_response = ai_service.get_response(user_id, message.text)
@@ -49,7 +62,8 @@ def handle_text(message):
         # Логируем текст
         username = message.from_user.username or message.from_user.first_name
         log_message(user_id, username, "TEXT", message.text, ai_response)
-        
+        stop_typing.set()
+        typing_thread.join()
         bot.edit_message_text(ai_response, message.chat.id, thinking_msg.message_id)
 
 @bot.message_handler(content_types=['voice'])
@@ -65,10 +79,13 @@ def handle_voice(message):
     except:
         pass
         
-    # Показываем статус 'записывает голос' или 'печатает'
-    bot.send_chat_action(message.chat.id, 'typing')
-    
+    # Показываем статус или 'печатает'    
+    stop_typing = threading.Event()
+    typing_thread = threading.Thread(target=keep_typing, args=(message.chat.id, stop_typing))
+    typing_thread.start()
     voice_service.handle_voice(bot, message, ai_service)
+    stop_typing.set()
+    typing_thread.join()
 
 if __name__ == "__main__":
     print("Бот Иру запущен!")
