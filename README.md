@@ -1,6 +1,4 @@
 <!-- @format -->
-<img width="461" height="618" alt="image" src="https://github.com/user-attachments/assets/7590cdb0-803d-4a6f-8512-fabf1ed9258d" />
-
 <div align="center">
 
 # 🤖 **Иру — Отказоустойчивый ИИ-Ассистент для Telegram**
@@ -32,7 +30,9 @@
 
 <div align="center">
 
-![Демонстрация](https://i.imgur.com/link_to_your_screenshot.png)
+<img width="461" height="618" alt="image" src="https://github.com/user-attachments/assets/7590cdb0-803d-4a6f-8512-fabf1ed9258d" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e0f593e7-f63d-4ea5-ae04-c9467b2f42ec" />
+
 
 </div>
 
