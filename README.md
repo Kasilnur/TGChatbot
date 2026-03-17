@@ -26,12 +26,10 @@
 
 ### 🖼️ Демонстрация работы
 
-> *Вставьте сюда скриншот с демонстрацией работы бота и его главного меню.*
-
 <div align="center">
 
 <img width="461" height="618" alt="image" src="https://github.com/user-attachments/assets/7590cdb0-803d-4a6f-8512-fabf1ed9258d" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e0f593e7-f63d-4ea5-ae04-c9467b2f42ec" />
+<img width="916" height="739" alt="image" src="https://github.com/user-attachments/assets/f357939a-0695-45dd-91f7-189345b77ca1" />
 
 
 </div>
